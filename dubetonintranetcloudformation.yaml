@@ -1,0 +1,156 @@
+Resources:
+  NoeGDubetonIntranetUserPool:
+    Type: 'AWS::Cognito::UserPool'
+    Properties:
+      UserPoolName: NoeGDubetonIntranetUserPool
+      AutoVerifiedAttributes:
+        - email
+
+  NoeGDubetonIntranetUserPoolClient:
+    Type: 'AWS::Cognito::UserPoolClient'
+    Properties:
+      ClientName: NoeGDubetonIntranetUserPoolClient
+      UserPoolId: !Ref NoeGDubetonIntranetUserPool
+      GenerateSecret: false
+
+  NoeGDubetonIntranetUserPoolAuthorizer:
+    Type: 'AWS::ApiGateway::Authorizer'
+    Properties:
+      Name: NoeGDubetonIntranetUserPoolAuthorizer
+      Type: COGNITO_USER_POOLS
+      IdentitySource: method.request.header.Authorization
+      RestApiId: !Ref NoeGDubetonIntranetRestApi
+      ProviderARNs:
+        - !GetAtt NoeGDubetonIntranetUserPool.Arn
+
+  NoeGDubetonIntranetRestApi:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Name: NoeGdubetonintranetapi
+
+  NoeGDubetonIntranetApiGatewayResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !GetAtt 
+        - NoeGDubetonIntranetRestApi
+        - RootResourceId
+      PathPart: NoeGDubetonIntranet
+      RestApiId: !Ref NoeGDubetonIntranetRestApi
+
+  NoeGDubetonIntranetApiGatewayMethodGetEmployee:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref NoeGDubetonIntranetUserPoolAuthorizer
+      HttpMethod: GET
+      ResourceId: !Ref NoeGDubetonIntranetApiGatewayResource
+      RestApiId: !Ref NoeGDubetonIntranetRestApi
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetEmployeeFunction.Arn}/invocations
+          - GetEmployeeFunction: !GetAtt GetEmployeeFunction.Arn
+
+  NoeGDubetonIntranetApiGatewayMethodGetTrucks:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref NoeGDubetonIntranetUserPoolAuthorizer
+      HttpMethod: GET
+      ResourceId: !Ref NoeGDubetonIntranetApiGatewayResource
+      RestApiId: !Ref NoeGDubetonIntranetRestApi
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetTrucksFunction.Arn}/invocations
+          - GetTrucksFunction: !GetAtt GetTrucksFunction.Arn
+
+  NoeGDubetonIntranetApiGatewayMethodGetDeliveries:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref NoeGDubetonIntranetUserPoolAuthorizer
+      HttpMethod: GET
+      ResourceId: !Ref NoeGDubetonIntranetApiGatewayResource
+      RestApiId: !Ref NoeGDubetonIntranetRestApi
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetDeliveriesFunction.Arn}/invocations
+          - GetDeliveriesFunction: !GetAtt GetDeliveriesFunction.Arn
+
+  GetEmployeeFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Handler: index.getemployee
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: noeg-dubeton-intranet
+      Runtime: nodejs14.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref NoeGDubetonIntranetDynamoDB
+
+  GetTrucksFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Handler: index.gettrucks
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: noeg-dubeton-intranet
+      Runtime: nodejs14.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref NoeGDubetonIntranetDynamoDB
+
+  GetDeliveriesFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Handler: index.getdeliveries
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: noeg-dubeton-intranet
+      Runtime: nodejs14.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref NoeGDubetonIntranetDynamoDB
+
+  LambdaExecutionRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: NoeGDubetonLambdaDynamoDBPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                Resource: !GetAtt NoeGDubetonIntranetDynamoDB.Arn
+
+  NoeGDubetonIntranetDynamoDB:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH

@@ -1,0 +1,18 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 14
+    commands:
+      - npm install -g aws-cli
+  build:
+    commands:
+      - echo Build started on `date`
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - aws cloudformation package --template-file dubetonintranetcloudformation.yaml --s3-bucket noeg-dubeton-intranet --output-template-file output-template.yaml
+artifacts:
+  files:
+    - output-template.yaml
