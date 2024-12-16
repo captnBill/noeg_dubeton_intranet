@@ -65,7 +65,7 @@ Resources:
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
         S3Bucket: noeg-dubeton-intranet
-      Runtime: nodejs14.x
+      Runtime: nodejs18.x
       Environment:
         Variables:
           TABLE_NAME: !Ref NoeGDubetonIntranetDynamoDB
@@ -77,7 +77,7 @@ Resources:
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
         S3Bucket: noeg-dubeton-intranet
-      Runtime: nodejs14.x
+      Runtime: nodejs18.x
       Environment:
         Variables:
           TABLE_NAME: !Ref NoeGDubetonIntranetDynamoDB
@@ -89,7 +89,7 @@ Resources:
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
         S3Bucket: noeg-dubeton-intranet
-      Runtime: nodejs14.x
+      Runtime: nodejs18.x
       Environment:
         Variables:
           TABLE_NAME: !Ref NoeGDubetonIntranetDynamoDB
