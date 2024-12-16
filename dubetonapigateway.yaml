@@ -1,14 +1,4 @@
 Resources:
-  NoeGDubetonIntranetUserPoolAuthorizer:
-    Type: 'AWS::ApiGateway::Authorizer'
-    Properties:
-      Name: NoeGDubetonIntranetUserPoolAuthorizer
-      Type: COGNITO_USER_POOLS
-      IdentitySource: method.request.header.Authorization
-      RestApiId: !Ref NoeGDubetonIntranetRestApi
-      ProviderARNs:
-        - !GetAtt NoeGDubetonIntranetUserPool.Arn
-
   NoeGDubetonIntranetRestApi:
     Type: 'AWS::ApiGateway::RestApi'
     Properties:
@@ -29,8 +19,7 @@ Resources:
   NoeGDubetonIntranetApiGatewayMethodGetEmployee:
     Type: 'AWS::ApiGateway::Method'
     Properties:
-      AuthorizationType: COGNITO_USER_POOLS
-      AuthorizerId: !Ref NoeGDubetonIntranetUserPoolAuthorizer
+      AuthorizationType: NONE
       HttpMethod: GET
       ResourceId: !Ref NoeGDubetonIntranetApiGatewayResource
       RestApiId: !Ref NoeGDubetonIntranetRestApi
@@ -44,8 +33,7 @@ Resources:
   NoeGDubetonIntranetApiGatewayMethodGetTrucks:
     Type: 'AWS::ApiGateway::Method'
     Properties:
-      AuthorizationType: COGNITO_USER_POOLS
-      AuthorizerId: !Ref NoeGDubetonIntranetUserPoolAuthorizer
+      AuthorizationType: NONE
       HttpMethod: GET
       ResourceId: !Ref NoeGDubetonIntranetApiGatewayResource
       RestApiId: !Ref NoeGDubetonIntranetRestApi
@@ -59,8 +47,7 @@ Resources:
   NoeGDubetonIntranetApiGatewayMethodGetDeliveries:
     Type: 'AWS::ApiGateway::Method'
     Properties:
-      AuthorizationType: COGNITO_USER_POOLS
-      AuthorizerId: !Ref NoeGDubetonIntranetUserPoolAuthorizer
+      AuthorizationType: NONE
       HttpMethod: GET
       ResourceId: !Ref NoeGDubetonIntranetApiGatewayResource
       RestApiId: !Ref NoeGDubetonIntranetRestApi
