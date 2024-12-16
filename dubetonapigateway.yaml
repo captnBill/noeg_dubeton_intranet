@@ -1,0 +1,72 @@
+Resources:
+  NoeGDubetonIntranetUserPoolAuthorizer:
+    Type: 'AWS::ApiGateway::Authorizer'
+    Properties:
+      Name: NoeGDubetonIntranetUserPoolAuthorizer
+      Type: COGNITO_USER_POOLS
+      IdentitySource: method.request.header.Authorization
+      RestApiId: !Ref NoeGDubetonIntranetRestApi
+      ProviderARNs:
+        - !GetAtt NoeGDubetonIntranetUserPool.Arn
+
+  NoeGDubetonIntranetRestApi:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Name: NoeGdubetonintranetapi
+
+  NoeGDubetonIntranetApiGatewayResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !GetAtt 
+        - NoeGDubetonIntranetRestApi
+        - RootResourceId
+      PathPart: NoeGDubetonIntranet
+      RestApiId: !Ref NoeGDubetonIntranetRestApi
+
+  NoeGDubetonIntranetApiGatewayMethodGetEmployee:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref NoeGDubetonIntranetUserPoolAuthorizer
+      HttpMethod: GET
+      ResourceId: !Ref NoeGDubetonIntranetApiGatewayResource
+      RestApiId: !Ref NoeGDubetonIntranetRestApi
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetEmployeeFunction.Arn}/invocations
+          - GetEmployeeFunction: !GetAtt GetEmployeeFunction.Arn
+
+  NoeGDubetonIntranetApiGatewayMethodGetTrucks:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref NoeGDubetonIntranetUserPoolAuthorizer
+      HttpMethod: GET
+      ResourceId: !Ref NoeGDubetonIntranetApiGatewayResource
+      RestApiId: !Ref NoeGDubetonIntranetRestApi
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetTrucksFunction.Arn}/invocations
+          - GetTrucksFunction: !GetAtt GetTrucksFunction.Arn
+
+  NoeGDubetonIntranetApiGatewayMethodGetDeliveries:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref NoeGDubetonIntranetUserPoolAuthorizer
+      HttpMethod: GET
+      ResourceId: !Ref NoeGDubetonIntranetApiGatewayResource
+      RestApiId: !Ref NoeGDubetonIntranetRestApi
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetDeliveriesFunction.Arn}/invocations
+          - GetDeliveriesFunction: !GetAtt GetDeliveriesFunction.Arn

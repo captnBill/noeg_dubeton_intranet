@@ -1,0 +1,14 @@
+Resources:
+  NoeGDubetonIntranetUserPool:
+    Type: 'AWS::Cognito::UserPool'
+    Properties:
+      UserPoolName: NoeGDubetonIntranetUserPool
+      AutoVerifiedAttributes:
+        - email
+
+  NoeGDubetonIntranetUserPoolClient:
+    Type: 'AWS::Cognito::UserPoolClient'
+    Properties:
+      ClientName: NoeGDubetonIntranetUserPoolClient
+      UserPoolId: !Ref NoeGDubetonIntranetUserPool
+      GenerateSecret: false
