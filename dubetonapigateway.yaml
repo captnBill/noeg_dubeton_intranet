@@ -6,6 +6,7 @@ Resources:
         Types:
           - REGIONAL
       Name: NoeGdubetonintranetapi
+      
 
   NoeGDubetonIntranetApiGatewayResource:
     Type: 'AWS::ApiGateway::Resource'
