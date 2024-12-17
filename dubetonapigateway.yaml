@@ -63,6 +63,15 @@ Resources:
     Properties:
       Handler: index.getemployee
       Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        exports.handler = async (event) => {
+          return {
+            isBase64Encoded: false,
+            statusCode: 200,
+            headers: { "Content-Type": "text/plain" }
+            body: "Your request: \n\n${JSON.stringify(event)}",
+          };
+        }
       Runtime: nodejs18.x
       Environment:
         Variables:
@@ -73,6 +82,15 @@ Resources:
     Properties:
       Handler: index.gettrucks
       Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        exports.handler = async (event) => {
+          return {
+            isBase64Encoded: false,
+            statusCode: 200,
+            headers: { "Content-Type": "text/plain" }
+            body: "Your request: \n\n${JSON.stringify(event)}",
+          };
+        }
       Runtime: nodejs18.x
       Environment:
         Variables:
@@ -83,6 +101,15 @@ Resources:
     Properties:
       Handler: index.getdeliveries
       Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        exports.handler = async (event) => {
+          return {
+            isBase64Encoded: false,
+            statusCode: 200,
+            headers: { "Content-Type": "text/plain" }
+            body: "Your request: \n\n${JSON.stringify(event)}",
+          };
+        }
       Runtime: nodejs18.x
       Environment:
         Variables:
