@@ -6,7 +6,7 @@ Resources:
         Types:
           - REGIONAL
       Name: NoeGdubetonintranetapi
-      
+
   NoeGDubetonIntranetApiGatewayResource:
     Type: 'AWS::ApiGateway::Resource'
     Properties:
@@ -63,8 +63,6 @@ Resources:
     Properties:
       Handler: index.getemployee
       Role: !GetAtt LambdaExecutionRole.Arn
-      Code:
-        S3Bucket: noeg-dubeton-intranet
       Runtime: nodejs18.x
       Environment:
         Variables:
@@ -75,8 +73,6 @@ Resources:
     Properties:
       Handler: index.gettrucks
       Role: !GetAtt LambdaExecutionRole.Arn
-      Code:
-        S3Bucket: noeg-dubeton-intranet
       Runtime: nodejs18.x
       Environment:
         Variables:
@@ -87,8 +83,6 @@ Resources:
     Properties:
       Handler: index.getdeliveries
       Role: !GetAtt LambdaExecutionRole.Arn
-      Code:
-        S3Bucket: noeg-dubeton-intranet
       Runtime: nodejs18.x
       Environment:
         Variables:
