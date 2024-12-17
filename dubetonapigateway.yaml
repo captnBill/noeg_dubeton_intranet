@@ -7,13 +7,31 @@ Resources:
           - REGIONAL
       Name: NoeGdubetonintranetapi
 
-  NoeGDubetonIntranetApiGatewayResource:
+  NoeGDubetonIntranetApiGatewayResourceEmployees:
     Type: 'AWS::ApiGateway::Resource'
     Properties:
       ParentId: !GetAtt 
         - NoeGDubetonIntranetRestApi
         - RootResourceId
-      PathPart: NoeGDubetonIntranet
+      PathPart: employees
+      RestApiId: !Ref NoeGDubetonIntranetRestApi
+
+  NoeGDubetonIntranetApiGatewayResourceTrucks:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !GetAtt 
+        - NoeGDubetonIntranetRestApi
+        - RootResourceId
+      PathPart: trucks
+      RestApiId: !Ref NoeGDubetonIntranetRestApi
+
+  NoeGDubetonIntranetApiGatewayResourceDeliveries:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !GetAtt 
+        - NoeGDubetonIntranetRestApi
+        - RootResourceId
+      PathPart: deliveries
       RestApiId: !Ref NoeGDubetonIntranetRestApi
 
   NoeGDubetonIntranetApiGatewayMethodGetEmployee:
@@ -21,7 +39,7 @@ Resources:
     Properties:
       AuthorizationType: NONE
       HttpMethod: GET
-      ResourceId: !Ref NoeGDubetonIntranetApiGatewayResource
+      ResourceId: !Ref NoeGDubetonIntranetApiGatewayResourceEmployees
       RestApiId: !Ref NoeGDubetonIntranetRestApi
       Integration:
         IntegrationHttpMethod: POST
@@ -35,7 +53,7 @@ Resources:
     Properties:
       AuthorizationType: NONE
       HttpMethod: GET
-      ResourceId: !Ref NoeGDubetonIntranetApiGatewayResource
+      ResourceId: !Ref NoeGDubetonIntranetApiGatewayResourceTrucks
       RestApiId: !Ref NoeGDubetonIntranetRestApi
       Integration:
         IntegrationHttpMethod: POST
@@ -49,7 +67,7 @@ Resources:
     Properties:
       AuthorizationType: NONE
       HttpMethod: GET
-      ResourceId: !Ref NoeGDubetonIntranetApiGatewayResource
+      ResourceId: !Ref NoeGDubetonIntranetApiGatewayResourceDeliveries
       RestApiId: !Ref NoeGDubetonIntranetRestApi
       Integration:
         IntegrationHttpMethod: POST
