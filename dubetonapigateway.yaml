@@ -83,12 +83,24 @@ Resources:
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
         ZipFile: |
+          const AWS = require('aws-sdk');
+          const dynamoDB = new AWS.DynamoDB.DocumentClient();
           exports.handler = async (event) => {
+            const params = {
+              TableName: process.env.TABLE_NAME,
+              KeyConditionExpression: '#category = :category',
+              ExpressionAttributeNames: {
+                '#category': 'category',
+              },
+              ExpressionAttributeValues: {
+                ':category': 'employees',
+              },
+            };
+            const data = await dynamoDB.query(params).promise();
             return {
-              isBase64Encoded: false,
               statusCode: 200,
-              headers: { "Content-Type": "text/plain" },
-              body: `Your request: \n\n${JSON.stringify(event)}`,
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data.Items),
             };
           };
       Runtime: nodejs18.x
@@ -103,12 +115,24 @@ Resources:
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
         ZipFile: |
+          const AWS = require('aws-sdk');
+          const dynamoDB = new AWS.DynamoDB.DocumentClient();
           exports.handler = async (event) => {
+            const params = {
+              TableName: process.env.TABLE_NAME,
+              KeyConditionExpression: '#category = :category',
+              ExpressionAttributeNames: {
+                '#category': 'category',
+              },
+              ExpressionAttributeValues: {
+                ':category': 'trucks',
+              },
+            };
+            const data = await dynamoDB.query(params).promise();
             return {
-              isBase64Encoded: false,
               statusCode: 200,
-              headers: { "Content-Type": "text/plain" },
-              body: `Your request: \n\n${JSON.stringify(event)}`,
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data.Items),
             };
           };
       Runtime: nodejs18.x
@@ -123,12 +147,24 @@ Resources:
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
         ZipFile: |
+          const AWS = require('aws-sdk');
+          const dynamoDB = new AWS.DynamoDB.DocumentClient();
           exports.handler = async (event) => {
+            const params = {
+              TableName: process.env.TABLE_NAME,
+              KeyConditionExpression: '#category = :category',
+              ExpressionAttributeNames: {
+                '#category': 'category',
+              },
+              ExpressionAttributeValues: {
+                ':category': 'deliveries',
+              },
+            };
+            const data = await dynamoDB.query(params).promise();
             return {
-              isBase64Encoded: false,
               statusCode: 200,
-              headers: { "Content-Type": "text/plain" },
-              body: `Your request: \n\n${JSON.stringify(event)}`,
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data.Items),
             };
           };
       Runtime: nodejs18.x
@@ -174,35 +210,4 @@ Resources:
         - AttributeName: category
           KeyType: RANGE
 
-  PopulateDynamoDBFunction:
-    Type: 'AWS::Lambda::Function'
-    Properties:
-      Handler: index.populate
-      Role: !GetAtt LambdaExecutionRole.Arn
-      Code:
-        ZipFile: |
-          const AWS = require('aws-sdk');
-          const dynamoDB = new AWS.DynamoDB.DocumentClient();
-          exports.handler = async (event) => {
-            const items = [
-              { id: '1', category: 'employees', name: 'John Doe' },
-              { id: '2', category: 'trucks', name: 'Truck 1' },
-              { id: '3', category: 'deliveries', name: 'Delivery 1' },
-            ];
-            for (const item of items) {
-              await dynamoDB.put({
-                TableName: process.env.TABLE_NAME,
-                Item: item,
-              }).promise();
-            }
-            return { statusCode: 200, body: 'Data populated' };
-          };
-      Runtime: nodejs18.x
-      Environment:
-        Variables:
-          TABLE_NAME: !Ref NoeGDubetonIntranetDynamoDB
-
-  PopulateDynamoDBCustomResource:
-    Type: 'Custom::PopulateDynamoDB'
-    Properties:
-      ServiceToken: !GetAtt PopulateDynamoDBFunction.Arn
+  
