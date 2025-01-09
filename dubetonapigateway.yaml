@@ -166,6 +166,43 @@ Resources:
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
+        - AttributeName: category
+          AttributeType: S
       KeySchema:
         - AttributeName: id
           KeyType: HASH
+        - AttributeName: category
+          KeyType: RANGE
+
+  PopulateDynamoDBFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Handler: index.populate
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        ZipFile: |
+          const AWS = require('aws-sdk');
+          const dynamoDB = new AWS.DynamoDB.DocumentClient();
+          exports.handler = async (event) => {
+            const items = [
+              { id: '1', category: 'employees', name: 'John Doe' },
+              { id: '2', category: 'trucks', name: 'Truck 1' },
+              { id: '3', category: 'deliveries', name: 'Delivery 1' },
+            ];
+            for (const item of items) {
+              await dynamoDB.put({
+                TableName: process.env.TABLE_NAME,
+                Item: item,
+              }).promise();
+            }
+            return { statusCode: 200, body: 'Data populated' };
+          };
+      Runtime: nodejs18.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref NoeGDubetonIntranetDynamoDB
+
+  PopulateDynamoDBCustomResource:
+    Type: 'Custom::PopulateDynamoDB'
+    Properties:
+      ServiceToken: !GetAtt PopulateDynamoDBFunction.Arn
